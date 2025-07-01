@@ -11,6 +11,9 @@ def get_db():
         yield db
     finally:
         db.close()
+@router.get("/health-check", response_model=list[schemas.Post])
+def read_posts(db: Session = Depends(get_db)):
+    return "ok"
 
 @router.get("/posts", response_model=list[schemas.Post])
 def read_posts(db: Session = Depends(get_db)):
