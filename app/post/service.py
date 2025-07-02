@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from app import models, schemas
+from app import models
+from app.post import schemas
 
 def get_posts(db: Session):
     return db.query(models.Post).all()
