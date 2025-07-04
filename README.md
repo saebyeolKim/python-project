@@ -101,19 +101,19 @@ docker-compose up --build
 
 ## 📢 향후 추가 예정
 
-1. `/users/me` 로그인 사용자 정보 확인 API
-2. 댓글(Comment) 기능 구현
-3. 게시글 페이징, 검색 기능
-4. 파일 업로드 기능 (이미지 등)
-5. 예외 처리 통합 / 에러 메시지 개선
-6. 테스트 코드 작성 (`pytest`, `TestClient`)
-7. OpenAPI 문서 정리 (summary, description 등)
-8. `.env.example` 제공 및 README 실행 가이드 보강
-9. 관리자 페이지 or 프론트 연동 (ex. Next.js)
+- [x] `/auth/me` 로그인 사용자 정보 확인 API
+- [ ] 댓글(Comment) 기능 구현
+- [ ] 게시글 페이징, 검색 기능
+- [ ] 파일 업로드 기능 (이미지 등)
+- [ ] 예외 처리 통합 / 에러 메시지 개선
+- [ ] 테스트 코드 작성 (`pytest`, `TestClient`)
+- [ ] OpenAPI 문서 정리 (summary, description 등)
+- [ ] `.env.example` 제공 및 README 실행 가이드 보강
+- [ ] 관리자 페이지 or 프론트 연동 (ex. Next.js)
 
 
 ## 🧭 진행 순서
-1. /users/me, 댓글 기능
+1. /auth/me, 댓글 기능
 2. 게시글 페이징/검색
 3. 테스트 코드 작성 & 예외 처리
 4. 파일 업로드
