@@ -88,6 +88,7 @@ docker-compose up --build
 
 * `POST /auth/signup`: 회원가입
 * `POST /auth/login`: 로그인 (access token 반환)
+* `POST /auth/me`: 로그인 사용자 정보 조회
 
 ### 게시글 (posts)
 
