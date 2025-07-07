@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from app.user.domain.user import User
+from user.domain.user import User
 
 class IUserRepository(metaclass=ABCMeta): # 파이썬에서 제공하는 객체지향 인터페이스로 선언하기 위해 ABCMeta 클래스를 이용
     

@@ -1,10 +1,10 @@
 from ulid import ULID
 from datetime import datetime
-from app.user.domain.user import User
-from app.user.domain.repository.user_repo import IUserRepository
-from app.user.infra.repository.user_repo import UserRepository
+from user.domain.user import User
+from user.domain.repository.user_repo import IUserRepository
+from user.infra.repository.user_repo import UserRepository
 from fastapi import HTTPException
-from app.utils.crypto import Crypto
+from utils.crypto import Crypto
 
 class UserService:
     def __init__(self):
