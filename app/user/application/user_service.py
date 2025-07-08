@@ -1,14 +1,19 @@
+from dependency_injector.wiring import inject, Provide
+from containers import Continer
 from ulid import ULID
 from datetime import datetime
 from user.domain.user import User
 from user.domain.repository.user_repo import IUserRepository
-from user.infra.repository.user_repo import UserRepository
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from utils.crypto import Crypto
 
 class UserService:
-    def __init__(self):
-        self.user_repo: IUserRepository = UserRepository()
+    @inject
+    def __init__(
+        self,
+        user_repo: IUserRepository, # 이렇게 하면 UserService 는 UserRepository 에 직접적인 의존을 안한다. 애플리케이션 계층이 인프라 계층과 의존 관계를 안만드는게 중요
+    ):
+        self.user_repo = user_repo
         self.ulid = ULID()
         self.crypto = Crypto()
 
