@@ -1,5 +1,5 @@
 from dependency_injector.wiring import inject, Provide
-from containers import Continer
+from containers import Container
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -11,12 +11,13 @@ class CreateUserBody(BaseModel): # 파이단틱의 BaseModel 을 상속받아 �
     name: str
     email: str
     password: str
+    memo: str
 
 @router.post("", status_code=201)
 @inject
 def create_user(
     user: CreateUserBody,
-    user_service: UserService = Depends(Provide[Continer.user_service])
+    user_service: UserService = Depends(Provide[Container.user_service])
     # user_service: Annotated[UserService, Depends(UserService)]
 ):
     create_user = user_service.create_user(
@@ -26,3 +27,21 @@ def create_user(
         memo=user.memo
     )
     return create_user
+
+class UpdateUserBody(BaseModel):
+    name: str | None = None
+    password: str | None = None
+
+@router.post("/{user_id}")
+@inject
+def update_user(
+    user_id: str,
+    user: UpdateUserBody,
+    user_service: UserService = Depends(Provide[Container.user_service])
+):
+    update_user = user_service.update_user(
+        user_id=user_id,
+        name=user.name,
+        password=user.password,
+    )
+    return user

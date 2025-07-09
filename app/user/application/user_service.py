@@ -1,5 +1,3 @@
-from dependency_injector.wiring import inject, Provide
-from containers import Continer
 from ulid import ULID
 from datetime import datetime
 from user.domain.user import User
@@ -8,7 +6,6 @@ from fastapi import HTTPException, Depends
 from utils.crypto import Crypto
 
 class UserService:
-    @inject
     def __init__(
         self,
         user_repo: IUserRepository, # 이렇게 하면 UserService 는 UserRepository 에 직접적인 의존을 안한다. 애플리케이션 계층이 인프라 계층과 의존 관계를 안만드는게 중요
@@ -27,7 +24,7 @@ class UserService:
         _user = None
 
         try: 
-            _user = self.usre_repo.find_by_email(email)
+            _user = self.user_repo.find_by_email(email)
         except HTTPException as e:
             if e.status_code != 422:
                 raise e
@@ -45,4 +42,24 @@ class UserService:
             created_at=now,
             updated_at=now,
         )
-        self.usre_repo.save(user)
+        self.user_repo.save(user)
+
+    def update_user(
+            self,
+            user_id: str,
+            name: str | None = None,
+            password: str | None = None,
+    ):
+        user = self.user_repo.find_by_id(user_id)
+
+        if name:
+            user.name = name
+
+        if password:
+            user.password = self.crypto.encrypt(password)
+        
+        user.updated_at = datetime.now()
+
+        self.user_repo.update(user)
+
+        return user
