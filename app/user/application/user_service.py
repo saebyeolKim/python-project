@@ -17,7 +17,13 @@ class UserService:
         self.ulid = ULID()
         self.crypto = Crypto()
 
-    def create_user(self, name: str, email: str, password: str):
+    def create_user(
+            self, 
+            name: str, 
+            email: str, 
+            password: str,
+            memo: str | None = None # 문자열이나 None을 받을 수 있고, 기본값은 None
+    ):
         _user = None
 
         try: 
@@ -35,6 +41,7 @@ class UserService:
             name=name,
             email=email,
             password=self.crypto.encrypt(password),
+            memo=memo,
             created_at=now,
             updated_at=now,
         )

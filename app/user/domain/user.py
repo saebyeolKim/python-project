@@ -11,5 +11,6 @@ class User:
     id: str
     profile: Profile
     password: str
+    memo: str | None # null 허용
     created_at: datetime
     updated_at: datetime

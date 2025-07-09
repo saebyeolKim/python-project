@@ -12,6 +12,7 @@ class UserRepository(IUserRepository):
             email=user.profile.email,
             name=user.profile.name,
             password=user.password,
+            memo=user.memo,
             created_at=user.created_at,
             updated_at=user.updated_at,
         )
