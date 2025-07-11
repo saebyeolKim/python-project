@@ -22,3 +22,7 @@ class IUserRepository(metaclass=ABCMeta): # 파이썬에서 제공하는 객체�
     @abstractmethod
     def update(self, user: User):
         raise NotImplementedError
+    
+    @abstractmethod
+    def get_users(self, page: int, items_per_page: int) -> tuple[int, list[User]]:
+        raise NotImplementedError

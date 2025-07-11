@@ -45,3 +45,20 @@ def update_user(
         password=user.password,
     )
     return user
+
+@router.get("")
+@inject
+def get_users(
+    page: int = 1, 
+    items_per_page: int = 1,
+    user_service = Depends(Provide[Container.user_service]), 
+):
+    
+    total_count, users = user_service.get_users(page, items_per_page)
+
+
+    return {
+        "total_count" : total_count,
+        "page" : page,
+        "users" : users
+    }
