@@ -2,16 +2,34 @@ from dependency_injector.wiring import inject, Provide
 from containers import Container
 from typing import Annotated
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 from user.application.user_service import UserService
+from datetime import datetime
 
 router = APIRouter(prefix="/users")
 
 class CreateUserBody(BaseModel): # 파이단틱의 BaseModel 을 상속받아 파이단틱 모델 선언
+    name: str = Field(min_length=2, max_length=32)
+    email: EmailStr = Field(max_length=64)
+    password: str = Field(min_length=8, max_length=32)
+    memo: str | None = Field(default=None)
+
+class UpdateUserBody(BaseModel):
+    name: str | None = Field(min_length=2, max_length=32, default=None)
+    password: str | None = Field(min_length=8, max_length=32, default=None)
+
+class UserResponse(BaseModel):
+    id: str
     name: str
     email: str
-    password: str
-    memo: str
+    created_at: datetime
+    updated_at: datetime
+
+class GetUserResponse(BaseModel):
+    total_count: int
+    page: int
+    users: list[UserResponse]
+    
 
 @router.post("", status_code=201)
 @inject
@@ -27,10 +45,6 @@ def create_user(
         memo=user.memo
     )
     return create_user
-
-class UpdateUserBody(BaseModel):
-    name: str | None = None
-    password: str | None = None
 
 @router.post("/{user_id}")
 @inject
@@ -52,7 +66,7 @@ def get_users(
     page: int = 1, 
     items_per_page: int = 1,
     user_service = Depends(Provide[Container.user_service]), 
-):
+) -> GetUserResponse :
     
     total_count, users = user_service.get_users(page, items_per_page)
 
