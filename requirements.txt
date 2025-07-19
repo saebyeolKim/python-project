@@ -3,11 +3,11 @@ uvicorn[standard]
 sqlalchemy
 psycopg2-binary
 python-dotenv
-python-jose==3.3.0
 passlib[bcrypt]==1.7.4
 bcrypt<4.0.0
-python-multipart
 py-ulid
 alembic>=1.8.0,<2.0.0
 dependency-injector==4.48.1
 pydantic[email]
+python-jose[cryptography]==3.5.0
+python-multipart==0.0.9

@@ -2,8 +2,9 @@ from ulid import ULID
 from datetime import datetime
 from user.domain.user import User
 from user.domain.repository.user_repo import IUserRepository
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, status
 from utils.crypto import Crypto
+from common.auth import create_access_token
 
 class UserService:
     def __init__(
@@ -70,3 +71,18 @@ class UserService:
     
     def delete(self, id: str):
         self.user_repo.delete(id)
+
+    def login(self, email: str, password: str):
+        user = self.user_repo.find_by_email(email)
+
+        if not user:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+
+        if not self.crypto.verify(password, user.password):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED) # 비밀번호가 일치하지 않다면 오류 발생
+    
+        access_token = create_access_token(
+            payload={"user_id": user.id}
+        )
+
+        return access_token
