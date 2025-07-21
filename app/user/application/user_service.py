@@ -4,7 +4,8 @@ from user.domain.user import User
 from user.domain.repository.user_repo import IUserRepository
 from fastapi import HTTPException, Depends, status
 from utils.crypto import Crypto
-from common.auth import create_access_token
+from common.auth import create_access_token, Role
+
 
 class UserService:
     def __init__(
@@ -69,7 +70,7 @@ class UserService:
         users = self.user_repo.get_users(page, items_per_page)
         return users
     
-    def delete(self, id: str):
+    def delete_user(self, id: str):
         self.user_repo.delete(id)
 
     def login(self, email: str, password: str):
@@ -82,7 +83,8 @@ class UserService:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED) # 비밀번호가 일치하지 않다면 오류 발생
     
         access_token = create_access_token(
-            payload={"user_id": user.id}
+            payload={"user_id": user.id},
+            role = Role.USER,
         )
 
         return access_token
