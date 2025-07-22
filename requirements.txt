@@ -11,3 +11,4 @@ dependency-injector==4.48.1
 pydantic[email]
 python-jose[cryptography]==3.5.0
 python-multipart==0.0.9
+pydantic-settings
