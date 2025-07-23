@@ -11,10 +11,10 @@ class Tag:
 @dataclass
 class Note:
     id: str
-    user_is: str
+    user_id: str
     title: str
     content: str
-    memo_data: str
+    memo_date: str
     tags: list[Tag]
     created_at: datetime
     updated_at: datetime
