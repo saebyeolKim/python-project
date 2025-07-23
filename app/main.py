@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from user.interface.controllers.user_controller import router as user_routers
+from note.interface.controllers.note_controller import router as note_routers
 from fastapi.exceptions import RequestValidationError
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
@@ -12,6 +13,7 @@ app.container = Container() # 애플리케이션을 구동할 때 앞에서 cont
 
 # 라우터 등록
 app.include_router(user_routers)
+app.include_router(note_routers)
 
 @app.exception_handler(RequestValidationError) # RequestValidationError 에러 발생 시 422 가 아닌 400 으로 오류코드 내보냄
 async def valiation_exception_handler(
