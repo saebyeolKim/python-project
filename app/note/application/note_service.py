@@ -91,6 +91,9 @@ class NoteService:
 
         return self.note_repo.update(user_id, note)
     
+    def delete_note(self, user_id: str, id: str):
+        self.note_repo.delete(user_id, id)
+    
     def get_notes_by_tag(
         self,
         user_id: str,
