@@ -5,7 +5,7 @@ from pydantic import BaseModel, EmailStr, Field
 from user.application.user_service import UserService
 from datetime import datetime
 from fastapi.security import OAuth2PasswordRequestForm
-from common.auth import CurrnetUser, get_current_user, get_admin_user
+from common.auth import CurrentUser, get_current_user, get_admin_user
 from typing import Annotated
 
 router = APIRouter(prefix="/users")
@@ -63,7 +63,7 @@ def create_user(
 @router.put("", response_model=UserResponse)
 @inject
 def update_user(
-    current_user: Annotated[CurrnetUser, Depends(get_current_user)],
+    current_user: Annotated[CurrentUser, Depends(get_current_user)],
     body: UpdateUserBody,
     user_service: UserService = Depends(Provide[Container.user_service])
 ):
@@ -79,7 +79,7 @@ def update_user(
 def get_users(
     page: int = 1, 
     items_per_page: int = 1,
-    current_user: CurrnetUser = Depends(get_admin_user), # page, items_per_page 의 기본값이 있기 때문에 이렇게 파라미터를 받아야한다. 만약 맨 앞에 사용한다면 Annotated 사용 가능
+    current_user: CurrentUser = Depends(get_admin_user), # page, items_per_page 의 기본값이 있기 때문에 이렇게 파라미터를 받아야한다. 만약 맨 앞에 사용한다면 Annotated 사용 가능
     user_service : UserService = Depends(Provide[Container.user_service]), 
 ) -> GetUserResponse :
     total_count, users = user_service.get_users(page, items_per_page)
@@ -94,7 +94,7 @@ def get_users(
 @router.delete("", status_code=204)
 @inject
 def delete_user(
-    current_user: Annotated[CurrnetUser, Depends(get_current_user)], # 기본값이 없기 때문에 이렇게 사용해서 기본값이 없는 인자로 간주 가능
+    current_user: Annotated[CurrentUser, Depends(get_current_user)], # 기본값이 없기 때문에 이렇게 사용해서 기본값이 없는 인자로 간주 가능
     user_service : UserService = Depends(Provide[Container.user_service])
 ):
     # TODO: 다른 유저를 삭제할 수 없도록 토큰에서 유저 아이디를 구한다.

@@ -19,7 +19,7 @@ class Role(StrEnum):
     USER = "USER"
 
 @dataclass
-class CurrnetUser:
+class CurrentUser:
     id: str
     role: Role
 
@@ -54,7 +54,7 @@ def get_current_user(token: Annotated[str, Depends(oauth2_schema)]):
     if not user_id or not role or role != Role.USER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     
-    return CurrnetUser(user_id, Role(role))
+    return CurrentUser(user_id, Role(role))
 
 def get_admin_user(token: Annotated[str, Depends(oauth2_schema)]):
     payload = decode_jwt(token)
@@ -63,4 +63,4 @@ def get_admin_user(token: Annotated[str, Depends(oauth2_schema)]):
     if not role or role != Role.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     
-    return CurrnetUser("ADMIN_USER_ID", Role(role))
+    return CurrentUser("ADMIN_USER_ID", Role(role))

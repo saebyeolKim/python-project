@@ -4,7 +4,7 @@ from dataclasses import asdict
 from dependency_injector.wiring import inject, Provide
 from datetime import datetime
 from typing import Annotated
-from common.auth import CurrnetUser, get_current_user
+from common.auth import CurrentUser, get_current_user
 from note.application.note_service import NoteService
 from containers import Container
 
@@ -18,7 +18,7 @@ class NoteResponse(BaseModel):
     memo_date: str
     tags: list[str]
     created_at: datetime
-    update_at: datetime
+    updated_at: datetime
 
 class CreateNoteBody(BaseModel):
     title: str = Field(min_length=1, max_length=64)
@@ -28,10 +28,15 @@ class CreateNoteBody(BaseModel):
         default=None, min_length=1, max_length=32,
     )
 
+@router.get("/ping")
+@inject
+def ping(note_service: NoteService = Depends(Provide[Container.note_service])):
+    return {"note_service_type": str(type(note_service))}
+
 @router.post("", response_model=NoteResponse)
 @inject
 def create_note(
-    currnet_user: Annotated[CurrnetUser, Depends(get_current_user)],
+    currnet_user: Annotated[CurrentUser, Depends(get_current_user)],
     body: CreateNoteBody,
     note_service: NoteService = Depends(Provide[Container.note_service])
 ):
@@ -43,7 +48,7 @@ def create_note(
         tag_names=body.tags if body.tags else [],
     )
 
-    response = asdict[note]
+    response = asdict(note)
     response.update({"tags": [tag.name for tag in note.tags]})
 
     return response
@@ -58,7 +63,7 @@ class GetNoteReponse(BaseModel):
 def get_notes(
     page: int = 1,
     items_per_page: int = 10,
-    currnet_user: CurrnetUser = Depends(get_current_user),
+    currnet_user: CurrentUser = Depends(get_current_user),
     note_service: NoteService = Depends(Provide[Container.note_service]),
 ):
     total_count, notes = note_service.get_notes(
@@ -83,7 +88,7 @@ def get_notes(
 @inject
 def get_note(
     id: str,
-    currnet_user: Annotated[CurrnetUser, Depends(get_current_user)],
+    currnet_user: Annotated[CurrentUser, Depends(get_current_user)],
     note_service: NoteService = Depends(Provide[Container.note_service]),
 ):
     note = note_service.get_note(
@@ -106,7 +111,7 @@ class UpdateNoteBody(BaseModel):
 @inject
 def update_note(
     id: str,
-    current_user: Annotated[CurrnetUser, Depends(get_current_user)],
+    current_user: Annotated[CurrentUser, Depends(get_current_user)],
     body: UpdateNoteBody,
     note_service: NoteService = Depends(Provide[Container.note_service])
 ):
@@ -128,7 +133,7 @@ def update_note(
 @inject
 def delete_note(
     id: str,
-    currnet_user: Annotated[CurrnetUser, Depends(get_current_user)],
+    currnet_user: Annotated[CurrentUser, Depends(get_current_user)],
     note_service: NoteService = Depends(Provide[Container.note_service])
 ):
     note_service.delete_note(
@@ -142,7 +147,7 @@ def get_notes_by_tag(
     tag_name: str,
     page: int = 1,
     items_per_page: int = 10,
-    current_user: CurrnetUser = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user),
     note_service: NoteService = Depends(Provide[Container.note_service]),
 ):
     total_count, notes = note_service.get_notes_by_tag(
@@ -155,7 +160,7 @@ def get_notes_by_tag(
     res_notes = []
     for note in notes:
         note_dict = asdict(note)
-        note_dict.update({"tags": tag.name for tag in note.tags})
+        note_dict.update({"tags": [tag.name for tag in note.tags]})
         res_notes.append(note_dict)
 
     return {

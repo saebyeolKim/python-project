@@ -5,7 +5,10 @@ from datetime import datetime
 from note.domain.note import Tag
 
 class NoteService:
-    def __init__(self, note_repo: INoteRepository):
+    def __init__(
+            self, 
+            note_repo: INoteRepository
+    ):
         self.note_repo = note_repo
         self.ulid = ULID()
 

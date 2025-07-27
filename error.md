@@ -13,7 +13,7 @@
 - [해결]
     - 로그인 기능을 최상단으로 올려서 해결, 지피티가 말하길 @inject 는 라우터에 등록하는 것이 아닌, 서비스와 서비스 사이의 의존성 주입을 위해 사용하는 것이라고 한다. 현재 이 프로젝트를 끝내고 다른 책들도 참고해서 어떻게 의존성 주입을 하는지 참고해 볼 것!
 
-### [ERROR2] current_user: CurrnetUser = Depends(get_admin_user) 와 current_user: Annotated[CurrnetUser, Depends(get_current_user)] 의 차이점
+### [ERROR2] current_user: CurrentUser = Depends(get_admin_user) 와 current_user: Annotated[CurrentUser, Depends(get_current_user)] 의 차이점
 - [오류내용]
   - get_users 에서는 Annotated 를 사용못하지만, delete_user 에서는 사용가능, 비슷한 기능임에도 차이점이 발생
     
@@ -25,7 +25,7 @@
 def get_users(
     page: int = 1,
     items_per_page: int = 1,
-    current_user: CurrnetUser = Depends(get_admin_user),
+    current_user: CurrentUser = Depends(get_admin_user),
 ):
 ```
 
@@ -41,7 +41,7 @@ def get_users(
 def get_users(
     page: int = 1,
     items_per_page: int = 1,
-    current_user: Annotated[CurrnetUser, Depends(get_admin_user)],
+    current_user: Annotated[CurrentUser, Depends(get_admin_user)],
 ):
 ```
 
@@ -55,7 +55,7 @@ def get_users(
 
 ```Python
 def delete_user(
-    current_user: Annotated[CurrnetUser, Depends(get_current_user)],
+    current_user: Annotated[CurrentUser, Depends(get_current_user)],
 ):
 ```
 

@@ -38,5 +38,5 @@ class INoteRepository(metaclass=ABCMeta):
         tag_name: str,
         page: int,
         items_per_page: int,
-    ) -> tuple[int, int[Note]]:
+    ) -> tuple[int, list[Note]]:
         raise NotImplementedError

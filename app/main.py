@@ -7,9 +7,16 @@ from fastapi.responses import JSONResponse
 from containers import Container
 from starlette.status import HTTP_400_BAD_REQUEST
 from fastapi import FastAPI, Depends
+import note.interface.controllers.note_controller  # 명시적으로 import!
+import user.interface.controllers.user_controller
 
+container = Container()
+container.wire(modules=[
+    note.interface.controllers.note_controller,
+    user.interface.controllers.user_controller
+])
 app = FastAPI(title="FastAPI 게시판", version="1.0.0")
-app.container = Container() # 애플리케이션을 구동할 때 앞에서 containers.py 컨테이너 클래스 등록
+app.container = container # 애플리케이션을 구동할 때 앞에서 containers.py 컨테이너 클래스 등록
 
 # 라우터 등록
 app.include_router(user_routers)
