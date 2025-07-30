@@ -2,26 +2,30 @@ from ulid import ULID
 from datetime import datetime
 from user.domain.user import User
 from user.domain.repository.user_repo import IUserRepository
-from fastapi import HTTPException, Depends, status
+from fastapi import BackgroundTasks, HTTPException, Depends, status
 from utils.crypto import Crypto
 from common.auth import create_access_token, Role
+from user.application.email_service import EmailService
 
 
 class UserService:
     def __init__(
         self,
         user_repo: IUserRepository, # 이렇게 하면 UserService 는 UserRepository 에 직접적인 의존을 안한다. 애플리케이션 계층이 인프라 계층과 의존 관계를 안만드는게 중요
+        email_service = EmailService,
     ):
         self.user_repo = user_repo
         self.ulid = ULID()
         self.crypto = Crypto()
+        self.email_service = email_service
 
     def create_user(
             self, 
+            background_tasks: BackgroundTasks,
             name: str, 
             email: str, 
             password: str,
-            memo: str | None = None # 문자열이나 None을 받을 수 있고, 기본값은 None
+            memo: str | None = None, # 문자열이나 None을 받을 수 있고, 기본값은 None
     ):
         _user = None
 
@@ -45,6 +49,10 @@ class UserService:
             updated_at=now,
         )
         self.user_repo.save(user)
+
+        background_tasks.add_task(
+            self.email_service.send_email, user.email
+        )
 
     def update_user(
             self,

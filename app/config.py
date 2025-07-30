@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: str
     JWT_SECRET_KEY: str
+    EMAIL_PASSWORD: str
 
 @lru_cache
 def get_settings():

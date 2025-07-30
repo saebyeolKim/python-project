@@ -1,6 +1,6 @@
 from dependency_injector.wiring import inject, Provide
 from containers import Container
-from fastapi import APIRouter, Depends
+from fastapi import BackgroundTasks, APIRouter, Depends
 from pydantic import BaseModel, EmailStr, Field
 from user.application.user_service import UserService
 from datetime import datetime
@@ -49,10 +49,12 @@ def login(
 @inject
 def create_user(
     user: CreateUserBody,
-    user_service: UserService = Depends(Provide[Container.user_service])
+    background_tasks: BackgroundTasks,
+    user_service: UserService = Depends(Provide[Container.user_service]),
     # user_service: Annotated[UserService, Depends(UserService)]
 ):
     create_user = user_service.create_user(
+        background_tasks=background_tasks,
         name=user.name,
         email=user.email,
         password=user.password,
