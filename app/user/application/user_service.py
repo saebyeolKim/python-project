@@ -6,6 +6,7 @@ from fastapi import BackgroundTasks, HTTPException, Depends, status
 from utils.crypto import Crypto
 from common.auth import create_access_token, Role
 from user.application.email_service import EmailService
+from user.application.send_welcome_email_task import SendWelcomeEmailTask
 
 
 class UserService:
@@ -21,7 +22,7 @@ class UserService:
 
     def create_user(
             self, 
-            background_tasks: BackgroundTasks,
+            # background_tasks: BackgroundTasks,
             name: str, 
             email: str, 
             password: str,
@@ -50,9 +51,7 @@ class UserService:
         )
         self.user_repo.save(user)
 
-        background_tasks.add_task(
-            self.email_service.send_email, user.email
-        )
+        SendWelcomeEmailTask().run(user.email)
 
     def update_user(
             self,

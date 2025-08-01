@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     POSTGRES_PORT: str
     JWT_SECRET_KEY: str
     EMAIL_PASSWORD: str
+    CELERY_BROKER_URL: str
+    CELERY_BACKEND_URL: str
 
 @lru_cache
 def get_settings():

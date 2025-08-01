@@ -11,6 +11,27 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: my-rabbit
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: test
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   web:
     build: .
@@ -18,15 +39,36 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     working_dir: /app
     volumes:
-      - ./app:/app 
+      - ./app:/app
     ports:
       - 8000:8000
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     env_file:
       - .env
     environment:
       - PYTHONDONTWRITEBYTECODE=1
+
+  worker:
+    build: .
+    container_name: fastapi-worker
+    command: celery -A common.messaging worker -n worker1 --loglevel=info
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+    restart: always
 
 volumes:
   postgres_data:
