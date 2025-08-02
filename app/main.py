@@ -9,6 +9,7 @@ from starlette.status import HTTP_400_BAD_REQUEST
 from fastapi import FastAPI, Depends
 import note.interface.controllers.note_controller  # 명시적으로 import!
 import user.interface.controllers.user_controller
+from middlewares import create_middlewares
 
 container = Container()
 container.wire(modules=[
@@ -17,6 +18,9 @@ container.wire(modules=[
 ])
 app = FastAPI(title="FastAPI 게시판", version="1.0.0")
 app.container = container # 애플리케이션을 구동할 때 앞에서 containers.py 컨테이너 클래스 등록
+
+#미들웨어 등록
+create_middlewares(app)
 
 # 라우터 등록
 app.include_router(user_routers)
