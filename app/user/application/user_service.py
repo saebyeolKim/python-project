@@ -13,12 +13,16 @@ class UserService:
     def __init__(
         self,
         user_repo: IUserRepository, # 이렇게 하면 UserService 는 UserRepository 에 직접적인 의존을 안한다. 애플리케이션 계층이 인프라 계층과 의존 관계를 안만드는게 중요
-        email_service = EmailService,
+        email_service: EmailService,
+        ulid: ULID,
+        crypto: Crypto,
+        send_welcome_email_task: SendWelcomeEmailTask,
     ):
         self.user_repo = user_repo
-        self.ulid = ULID()
-        self.crypto = Crypto()
+        self.ulid = ulid
+        self.crypto = crypto
         self.email_service = email_service
+        self.send_welcome_email_task = send_welcome_email_task
 
     def create_user(
             self, 
@@ -50,8 +54,9 @@ class UserService:
             updated_at=now,
         )
         self.user_repo.save(user)
+        self.send_welcome_email_task.delay(user.email)
 
-        SendWelcomeEmailTask().run(user.email)
+        return user
 
     def update_user(
             self,
